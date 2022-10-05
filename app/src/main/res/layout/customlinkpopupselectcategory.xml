@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="350dp"
+    android:layout_height="475dp"
+    android:background="#09022D"
+    android:padding="5dp"
+    android:layout_gravity="center">
+    <TextView
+        android:layout_width="50dp"
+        android:gravity="center_horizontal"
+        android:id="@+id/closebtn"
+        android:layout_height="50dp"
+        android:textSize="30dp"
+        android:textColor="@color/white"
+        android:text="X"
+        android:textStyle="bold"
+        android:layout_gravity="end"
+        />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/anim"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            app:lottie_rawRes="@raw/select"
+            android:layout_centerHorizontal="true"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true" />
+
+        <TextView
+            android:id="@+id/headingpopup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/anim"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp"
+            android:text="Please select the category"
+            android:textColor="@color/white"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/veges"
+            android:layout_width="150dp"
+            android:layout_height="80dp"
+            android:layout_below="@id/headingpopup"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="#2196F3"
+            android:text="Add Vegetables"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/fruits"
+            android:layout_width="150dp"
+            android:layout_height="80dp"
+            android:layout_below="@id/headingpopup"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="15dp"
+            android:backgroundTint="#FA407F"
+            android:text="Add Fruits"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold" />
+
+
+
+    </RelativeLayout>
+
+</LinearLayout>

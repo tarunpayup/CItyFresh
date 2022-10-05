@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/white"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Confirms"
+    android:orientation="vertical"
+    >
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        app:lottie_rawRes="@raw/orderconfirms"
+        app:lottie_autoPlay="true"
+        />
+
+    <TextView
+        android:id="@+id/disnote"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:text=""
+        android:textSize="70dp"
+        android:gravity="center"
+        android:layout_marginTop="-25dp"
+        android:textColor="#228b22"
+        android:fontFamily="@font/amaranth"/>
+
+    <TextView
+        android:id="@+id/disnote2"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:text=""
+        android:textSize="30dp"
+        android:padding="5dp"
+        android:layout_marginTop="-10dp"
+        android:gravity="center"
+        android:textColor="#228b22"
+        android:fontFamily="@font/amaranth"/>
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <Button
+        android:id="@+id/shopmore"
+        android:layout_width="150dp"
+        android:layout_height="80dp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="15dp"
+        android:backgroundTint="@color/YellowGreen"
+        android:text="Shop More"
+        android:textColor="@color/black"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/myorders"
+        android:layout_width="150dp"
+        android:layout_height="80dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="15dp"
+        android:backgroundTint="@color/green"
+        android:text="My Orders"
+        android:textColor="@color/black"
+        android:textStyle="bold" />
+</RelativeLayout>
+</LinearLayout>

@@ -1,0 +1,412 @@
+package com.fwts.cityfreshapp;
+
+import android.app.Dialog;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.bumptech.glide.Glide;
+import com.fwts.cityfreshapp.Model.AdminCartUpload;
+import com.fwts.cityfreshapp.Model.CartUpload;
+import com.fwts.cityfreshapp.Model.PreviousOrderUpload;
+import com.fwts.cityfreshapp.Model.ProductModel;
+import com.fwts.cityfreshapp.adapter.CartAdapter;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
+
+import io.paperdb.Paper;
+
+public class ShowProductQuantity extends AppCompatActivity {
+    private final String Url = "http://www.tarunbansal.co.in/fruitseller/cart.php";
+    ImageView increment, decrement;
+    TextView numberdisp;
+    Button addtocartbtn, updateBtn;
+    int count = 0;
+    Calendar calendar = Calendar.getInstance();
+    SimpleDateFormat currentDate = new SimpleDateFormat("ddmmyyyy");
+    SimpleDateFormat currentTime = new SimpleDateFormat("HHmmss");
+    String saveCurrentDate, saveCurrentTime;
+    CartAdapter cartAdapterIntent;
+    //Testing - Remove after test to implement it
+    ImageView productinformationimage;
+    TextView productinformationprice, productinformationunit, productinformationqty, productinformationname;
+    ProductModel productModel;
+    private String work, valuePhone;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_show_product_quantity);
+        Paper.init(this);
+        productModel = getIntent().getParcelableExtra("list");
+        productinformationimage = findViewById(R.id.productinformationimage);
+        productinformationname = findViewById(R.id.productinformationname);
+        productinformationqty = findViewById(R.id.productinformationqty);
+        productinformationunit = findViewById(R.id.productinformationunit);
+        increment = findViewById(R.id.increment);
+        decrement = findViewById(R.id.decrement);
+        numberdisp = findViewById(R.id.numberdisp);
+        addtocartbtn = findViewById(R.id.addtocartbtn);
+        productinformationprice = findViewById(R.id.productinformationprice);
+        valuePhone = Paper.book().read("phone");
+        String valueName = Paper.book().read("name");
+        String valueAddress = Paper.book().read("address");
+        String pwde = Paper.book().read("pwde");
+        String btnValue = addtocartbtn.getText().toString().trim();
+        work = getIntent().getStringExtra("work");
+        cartAdapterIntent = (CartAdapter) getIntent().getSerializableExtra("cart_product");
+
+        updateBtn = (Button) findViewById(R.id.editProductBtn);
+        productinformationimage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String imageUrl = productModel.getImage().toString().trim();
+                Toast.makeText(ShowProductQuantity.this, imageUrl, Toast.LENGTH_SHORT).show();
+                Log.d("URL Value", imageUrl);
+            }
+        });
+
+
+        updateBtn.setVisibility(View.INVISIBLE);
+
+        if (work != null) {
+            Toast.makeText(this, "Working", Toast.LENGTH_SHORT).show();
+            increment.setVisibility(View.INVISIBLE);
+            decrement.setVisibility(View.INVISIBLE);
+            numberdisp.setVisibility(View.INVISIBLE);
+            addtocartbtn.setVisibility(View.INVISIBLE);
+            updateBtn.setVisibility(View.VISIBLE);
+            if (work.equals("editVegetable")) {
+                productinformationprice.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Dialog editPrices;
+                        editPrices = new Dialog(ShowProductQuantity.this);
+                        editPrices.setContentView(R.layout.editprices);
+                        Button priceBtn = editPrices.findViewById(R.id.updatePriceBtn);
+                        TextView clostBtn = editPrices.findViewById(R.id.editclosebtn);
+                        TextInputLayout priceText = editPrices.findViewById(R.id.qtyEditPrice);
+
+                        priceBtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                String newPrice = priceText.getEditText().getText().toString().trim();
+                                productinformationprice.setText(newPrice);
+                                editPrices.cancel();
+                            }
+                        });
+                        clostBtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                editPrices.cancel();
+                            }
+                        });
+
+                        editPrices.show();
+                    }
+                });
+
+
+            } else if (work.equals("editFruit")) {
+                productinformationprice.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Dialog editPrices;
+                        editPrices = new Dialog(ShowProductQuantity.this);
+                        editPrices.setContentView(R.layout.editprices);
+                        Button priceBtn = editPrices.findViewById(R.id.updatePriceBtn);
+                        TextView clostBtn = editPrices.findViewById(R.id.editclosebtn);
+                        TextInputLayout priceText = editPrices.findViewById(R.id.qtyEditPrice);
+
+                        priceBtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                String newPrice = priceText.getEditText().getText().toString().trim();
+                                productinformationprice.setText(newPrice);
+                                editPrices.cancel();
+                            }
+                        });
+                        clostBtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                editPrices.cancel();
+                            }
+                        });
+
+                        editPrices.show();
+                    }
+                });
+
+            }
+        } else {
+
+            if (cartAdapterIntent != null) {
+
+                addtocartbtn.setVisibility(View.GONE);
+                updateBtn.setVisibility(View.VISIBLE);
+                count = Integer.parseInt(cartAdapterIntent.getProductQty());
+                numberdisp.setText("" + count);
+
+                productinformationname.setText(cartAdapterIntent.getProductName());
+                productinformationqty.setText(cartAdapterIntent.getProductQty() + "");
+                productinformationprice.setText(cartAdapterIntent.getTotalPrice() + "");
+                Glide.with(this).load(cartAdapterIntent.getProductImage()).into(productinformationimage);
+
+                // Toast.makeText(this, "Value is not here", Toast.LENGTH_SHORT).show();
+
+            }
+        }
+
+        updateBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (work != null) {
+                    if (work.equals("editVegetable")) {
+                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
+                                .child("Product").child("Vegetables").child(productModel.getKey());
+                        Map<String, Object> updates = new HashMap<String, Object>();
+                        updates.put("p_price", productinformationprice.getText().toString().trim());
+                        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                ref.updateChildren(updates);
+                                Toast.makeText(ShowProductQuantity.this, "Updated", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(ShowProductQuantity.this, Confirms.class);
+                                intent.putExtra("editoption", "opt");
+                                startActivity(intent);
+                                finish();
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+                    } else if (work.equals("editFruit")) {
+                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Product").child("Fruits").child(productModel.getKey());
+                        Map<String, Object> updates = new HashMap<String, Object>();
+                        updates.put("p_price", productinformationprice.getText().toString().trim());
+                        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                ref.updateChildren(updates);
+                                Toast.makeText(ShowProductQuantity.this, "Updated", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(ShowProductQuantity.this, Confirms.class);
+                                intent.putExtra("editoption", "opt");
+                                startActivity(intent);
+                                finish();
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+                    }
+                } else {
+
+                    updateCart();
+
+
+                }
+
+            }
+        });
+
+
+        if (productModel != null) {
+            productinformationname.setText(productModel.getP_name());
+            productinformationqty.setText(productModel.getP_qty() + "");
+            productinformationunit.setText(productModel.getP_unit());
+            productinformationprice.setText(productModel.getP_price() + "");
+            Glide.with(this).load(productModel.getImage()).into(productinformationimage);
+
+
+        }
+        increment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                incrementValue();
+            }
+
+            private void incrementValue() {
+                count++;
+                numberdisp.setText("" + count);
+            }
+        });
+
+        decrement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (count <= 0) count = 0;
+                else count--;
+                numberdisp.setText("" + count);
+
+            }
+        });
+        addtocartbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                String checkQty = numberdisp.getText().toString().trim();
+                if (checkQty.equals("Qty")) {
+                    Toast.makeText(ShowProductQuantity.this, "Please select a valid quantity", Toast.LENGTH_SHORT).show();
+                } else if (checkQty.equals("0")) {
+                    Toast.makeText(ShowProductQuantity.this, "Quantity must be greater than 0", Toast.LENGTH_SHORT).show();
+                } else {
+                    String orderValue = numberdisp.getText().toString().trim();
+                    String productinformationpriceSt = productinformationprice.getText().toString().trim();
+                    int oPrice = Integer.parseInt(productinformationpriceSt);
+                    int oValue = Integer.parseInt(orderValue);
+
+                    int totalValue = oPrice * oValue;
+                    String TotalValue = String.valueOf(totalValue);
+                    String nameOfProduct = productinformationname.getText().toString().trim();
+                    String productImageOption = productModel.getImage().toString().trim();
+
+                    //Toast.makeText(ShowProductQuantity.this, "Total Price is: " + TotalValue, Toast.LENGTH_SHORT).show();
+                    //code for checking the login or not system
+
+                    if (Paper.exist("phone")) {
+                        //Toast.makeText(ShowProductQuantity.this, "Created", Toast.LENGTH_SHORT).show();
+                        UploadTheProductIntoCart(nameOfProduct, orderValue, TotalValue, productImageOption, productinformationpriceSt);
+
+                    } else {
+                        Toast.makeText(ShowProductQuantity.this, "You are not login.", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(ShowProductQuantity.this, LoginActivity.class);
+                        startActivity(intent);
+                    }
+                }
+
+
+            }
+
+            //Work from here
+            private void UploadTheProductIntoCart(String nameOfProduct, String orderValue, String totalValue, String productImageOption, String productinformationpriceSt) {
+                saveCurrentDate = currentDate.format(calendar.getTime());
+                saveCurrentTime = currentTime.format(calendar.getTime());
+                String dateAndTime = saveCurrentDate + saveCurrentTime;
+                //User Unique Id
+                String uniqueId = valuePhone + pwde;
+
+                //Product Unique Id
+                String productId = nameOfProduct + dateAndTime + orderValue + totalValue;
+
+
+                DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference("Cart").child(valuePhone);
+                CartUpload cartUpload = new CartUpload(nameOfProduct, orderValue, totalValue, productImageOption);
+                rootRef.push().setValue(cartUpload);
+
+
+                AdminProductUpload(nameOfProduct, orderValue, totalValue, valuePhone);
+
+                Toast.makeText(ShowProductQuantity.this, "Product Added Successfully", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(ShowProductQuantity.this, CartActivity.class);
+                startActivity(intent);
+                finish();
+
+
+            }
+
+            private void AdminProductUpload(String nameOfProduct, String orderValue, String totalValue, String valuePhone) {
+                saveCurrentDate = currentDate.format(calendar.getTime());
+                saveCurrentTime = currentTime.format(calendar.getTime());
+                String dateAndTime = saveCurrentDate + " " + saveCurrentTime;
+                DatabaseReference adminRef = FirebaseDatabase.getInstance().getReference("Admin");
+                AdminCartUpload adminCartUpload = new AdminCartUpload(dateAndTime, valueName, valuePhone, valueAddress, nameOfProduct, orderValue, totalValue);
+                adminRef.push().setValue(adminCartUpload);
+
+                PreviousProductUpload(nameOfProduct, orderValue, totalValue);
+
+            }
+
+            private void PreviousProductUpload(String nameOfProduct, String orderValue, String totalValue) {
+                saveCurrentDate = currentDate.format(calendar.getTime());
+                saveCurrentTime = currentTime.format(calendar.getTime());
+                String dateAndTime = saveCurrentDate + " " + saveCurrentTime;
+                DatabaseReference previousProductRef = FirebaseDatabase.getInstance().getReference("Previous").child(valuePhone);
+                PreviousOrderUpload previousOrderUpload = new PreviousOrderUpload(dateAndTime, nameOfProduct, orderValue, totalValue);
+                previousProductRef.push().setValue(previousOrderUpload);
+            }
+
+        });
+
+
+    }
+
+    private void updateCart() {
+
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("productQty", numberdisp.getText().toString().trim());
+
+        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference("Cart").child(valuePhone);
+
+        rootRef.child(cartAdapterIntent.getKey()).updateChildren(hashMap)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+
+                        if (task.isSuccessful()) {
+
+                            Toast.makeText(ShowProductQuantity.this, "Cart updated successfully", Toast.LENGTH_SHORT).show();
+                            onBackPressed();
+                        }
+
+                    }
+                });
+
+    }
+
+   /* private void UpdateValueInServer(String nameOfProduct, String orderValue, String totalValue, String productImageOption, String uniqueId, String productId, String productinformationpriceSt) {
+        String queryString = Url+"?name="+nameOfProduct+"&qty="+orderValue+"&tprice="+totalValue+"&image="+productImageOption+"&uqid="+uniqueId+"&prid="+productId+"&price="+productinformationpriceSt;
+        productinformationname.setText(queryString);
+        class dbclass extends AsyncTask<String,Void,String>{
+
+            protected void onPostExecuted(String data){
+              Toast.makeText(ShowProductQuantity.this, data, Toast.LENGTH_SHORT).show();
+                productinformationname.setText(data);
+
+            }
+
+            @Override
+            protected String doInBackground(String... param) {
+                try {
+                    URL url = new URL(param[0]);
+                    HttpURLConnection conn =  (HttpURLConnection) url.openConnection();
+                    BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                    return br.readLine();
+
+
+                }catch (Exception e){
+                    return e.getMessage();
+
+                }
+
+            }
+        }
+
+        dbclass obj = new dbclass();
+        obj.execute(queryString);
+    }
+*/
+
+}
